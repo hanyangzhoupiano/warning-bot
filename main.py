@@ -6,6 +6,8 @@ import random
 import asyncio
 import math
 import time
+import datetime
+import pytz
 from discord.ext import commands
 
 from threading import Thread
@@ -20,6 +22,8 @@ def home():
 
 warnings = {}
 
+TIME_ZONE = "US/Eastern"
+
 def run_web():
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
@@ -28,8 +32,6 @@ Thread(target=run_web).start()
 
 intents = discord.Intents.all()
 intents.messages = True
-
-disabled_commands = []
 
 bot = commands.Bot(command_prefix=lambda bot, message: "!", intents=intents)
 
@@ -60,7 +62,7 @@ async def on_command_error(ctx, error):
 
 @commands.has_permissions(kick_members=True)
 @bot.command(help="Warn a user.", aliases=["w"])
-async def warn(ctx, name: str = None, reason: str = "No reason provided."):
+async def warn(ctx, name: str = None, *, reason: str = "No reason provided."):
     user = None
     if name is None:
         user = ctx.author
@@ -130,12 +132,16 @@ async def warn(ctx, name: str = None, reason: str = "No reason provided."):
 
             if user_id not in warnings:
                 warnings[user_id] = []
-            warnings[user_id].append(reason)
+            warnings[user_id].append({
+                "reason": reason,
+                "moderator": ctx.author.mention,
+                "time": datetime.datetime.now(pytz.utc).astimezone(pytz.timezone(TIME_ZONE)).strftime("%Y-%m-%d %I:%M:%S %p")
+            })
             amount = len(warnings[user_id])
             
             await ctx.send(embed=discord.Embed(
                 color=int("50B4E6", 16),
-                description=f'✅ Sucessfully warned "{user.name}". **{user.name}**     now has {amount} warnings.'
+                description=f'✅ Sucessfully warned "{user.name}". {user.name} now has {amount} warnings.'
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
         else:
             await ctx.send(embed=discord.Embed(
@@ -213,11 +219,14 @@ async def view_warnings(ctx, name: str = None):
         user_id = str(user.id)
         user_warnings = warnings.get(user_id, [])
         if not user_warnings:
-            await ctx.send(f"✅ **{user.name}** has no warnings!")
+            await ctx.send(f"✅ {user.name} has no warnings!")
         else:
-            warning_list = "\n".join(f"{i+1}. {reason}" for i, reason in enumerate(user_warnings))
+            warning_list = "\n".join(
+                f"{i+1}. **{warn['reason']}** (by {warn['moderator']} at {warn['time']})"
+                for i, warn in enumerate(user_warnings)
+            )
             await ctx.send(embed=discord.Embed(
-                title=f"**{user.name}**'s Warnings",
+                title=f"Warnings for {user.name}",
                 description=warning_list,
                 color=int("50B4E6", 16)
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
@@ -303,4 +312,12 @@ async def clear_warnings(ctx, name: str = None):
                 description=f"❌ **{user.name}** has no warnings."
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
 
-bot.run("MTM3NzEwODg4MjI0NTAyNTgzMg.GRmHFp.dwE0vAL8hAMQjkyFBymdY7h1MDVvcNaWGY4-Po")
+@bot.command(help="say something", aliases=["s"])
+async def say(ctx, text: str = ""):
+    if text:
+        await ctx.send(embed=discord.Embed(
+            description=text,
+            color=int("50B4E6", 16)
+        ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+
+bot.run("MTM3NzEwODg4MjI0NTAyNTgzMg.G34Vpg.RJq4V5EoK6U--Oo6YBhMGvCgc9kc6cdQqk88fk")
