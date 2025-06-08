@@ -150,12 +150,12 @@ async def warn(ctx, name: str = None, reason: str = "No reason provided."):
             await ctx.send(embed=discord.Embed(
                 color=int("50B4E6", 16),
                 description=f'✅ Sucessfully warned "{user.name}". **{user.name}**     now has {amount} warnings.'
-            )).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+            ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
         else:
             await ctx.send(embed=discord.Embed(
                 color=int("FA3939", 16),
                 description=f"❌ Cannot warn a bot."
-            )).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+            ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
 
 @commands.has_permissions(kick_members=True)
 @bot.command(help="View the warnings of a user.", aliases=["view_warn", "vw"])
