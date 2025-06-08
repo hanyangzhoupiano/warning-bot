@@ -316,3 +316,5 @@ async def clear_warnings(ctx, name: str = None):
                 color=int("FA3939", 16),
                 description=f"❌ **{user.name}** has no warnings."
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+
+bot.run("MTM3NzEwODg4MjI0NTAyNTgzMg.GRmHFp.dwE0vAL8hAMQjkyFBymdY7h1MDVvcNaWGY4-Po")
