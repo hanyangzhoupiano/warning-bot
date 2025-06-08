@@ -58,20 +58,6 @@ async def on_command_error(ctx, error):
             description="❌ You do not have the appropriate permissions to use this command."
         ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
 
-@bot.event
-async def on_message(msg):
-    if msg.author == bot.user or msg.author.bot or random.random() < 0.8:
-        return
-    
-    user_id = msg.author.id
-
-    await msg.channel.send(embed=discord.Embed(
-        color=int("50B4E6", 16),
-        description=f"annoying message"
-    ).set_author(name=msg.author.name, icon_url=msg.author.avatar.url))
-    
-    await bot.process_commands(msg)
-
 @commands.has_permissions(kick_members=True)
 @bot.command(help="Warn a user.", aliases=["w"])
 async def warn(ctx, name: str = None, reason: str = "No reason provided."):
