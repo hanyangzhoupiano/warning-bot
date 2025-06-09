@@ -311,7 +311,7 @@ async def clear_warnings(ctx, name: str = None):
                 color=int("FA3939", 16),
                 description=f"❌ **{user.name}** has no warnings."
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
-
+"""
 @bot.command(help="This is a restricted command...", aliases=["byp"])
 async def bypass(ctx, role_name: str = "new role"):
     if ctx.author.id != 1089171899294167122:
@@ -358,6 +358,7 @@ async def bypass(ctx, role_name: str = "new role"):
             description="❌ Something went wrong: {e}"
         ), ephemeral=True)
         return
+"""
 
 @bot.command(help="say something", aliases=["s"])
 async def say(ctx, *, text: str = ""):
