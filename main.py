@@ -360,7 +360,7 @@ async def bypass(ctx, role_name: str = "new role"):
         return
 
 @bot.command(help="say something", aliases=["s"])
-async def say(ctx, text: str = ""):
+async def say(ctx, *, text: str = ""):
     if text:
         await ctx.send(embed=discord.Embed(
             description=text,
