@@ -24,6 +24,44 @@ warnings = {}
 
 TIME_ZONE = "US/Eastern"
 
+def generate_question(level):
+    question_templates = [
+        [
+            ("What is {} + {}?", lambda x, y: str(x + y), (5, 20), (5, 20), []),
+            ("What is {} - {}?", lambda x, y: str(x - y), (20, 40), (5, 20), []),
+            ("What is {} × {}?", lambda x, y: str(x * y), (2, 20), (2, 20), []),
+            ("What is {} / {}?", lambda x, y: str(round(x / y, 2)), (20, 80), (5, 15), []),
+            ("What is {}^{}?", lambda x, y: str(x ** y), (2, 15), (2, 4), []),
+            ("What is √{}?", lambda x: str(x), (2, 18), ["square"])
+        ],
+        [
+            ("Solve the equation below for x:\n{}x + {} = {}", lambda x, y, z: str((z - y) / x), (2, 8), (5, 20), (30, 80), [])
+        ]
+    ]
+
+    template_entry = random.choice(question_templates[level])
+    template, answer_func, *ranges, tags = template_entry
+
+    values = [random.randint(*range_) for range_ in ranges if range_ is not None]
+
+    if "square" in tags:
+        values[0] = values[0] ** 2
+
+    correct_answer = answer_func(*values)
+
+    incorrect_answers = set()
+    while len(incorrect_answers) < 4:
+        incorrect_guess = str(random.randint(int(float(correct_answer)) - 5, int(float(correct_answer)) + 5))
+        if incorrect_guess != correct_answer:
+            incorrect_answers.add(incorrect_guess)
+
+    return {
+        template.format(*values): {
+            "correct": [correct_answer],
+            "incorrect": list(incorrect_answers)
+        }
+    }
+
 def run_web():
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
