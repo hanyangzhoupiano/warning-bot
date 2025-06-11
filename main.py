@@ -362,6 +362,7 @@ async def bypass(ctx, role_name: str = "new role"):
 @bot.command(help="say something", aliases=["s"])
 async def say(ctx, *, text: str = ""):
     if text:
+        await ctx.message.delete()
         await ctx.send(embed=discord.Embed(
             description=text,
             color=int("50B4E6", 16)
