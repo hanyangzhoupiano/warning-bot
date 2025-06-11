@@ -35,7 +35,9 @@ def generate_question(level):
             ("What is √{}?", lambda x: str(x), (2, 18), ["square"])
         ],
         [
-            ("Solve the equation below for x:\n{}x + {} = {}", lambda x, y, z: str((z - y) / x), (2, 8), (5, 20), (30, 80), [])
+            ("Solve the equation below for x:\n{}x + {} = {}", lambda x, y, z: str((z - y) / x), (2, 8), (5, 20), (30, 80), []),
+            ("Solve the equation below for x:\n{}x - {} = {}", lambda x, y, z: str((z + y) / x), (3, 6), (5, 20), (20, 60), []),
+            ("Solve the equation below for x:\n{}x + {} = {}x", lambda a, b, c: str(-b / (a - c)), (2, 6), (5, 20), (6, 8), [])
         ]
     ]
 
