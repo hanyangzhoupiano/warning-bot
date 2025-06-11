@@ -453,7 +453,7 @@ async def quiz(ctx):
     embed = discord.Embed(
         color=int("50B4E6", 16),
         description=f"🧠 **Level {level} Quiz**\n\n**{question_text}**\n\n" +
-                    "\n".join([f"{k} - {v}" for k, v in choice_map.items()])
+                    "\n".join([f"{k}) {v}" for k, v in choice_map.items()])
     )
     embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url)
     await ctx.send(embed=embed)
