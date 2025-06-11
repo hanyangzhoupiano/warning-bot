@@ -37,7 +37,9 @@ def generate_question(level):
         [
             ("Solve the equation below for x:\n{}x + {} = {}", lambda x, y, z: str((z - y) / x), (2, 8), (5, 20), (30, 80), []),
             ("Solve the equation below for x:\n{}x - {} = {}", lambda x, y, z: str((z + y) / x), (3, 6), (5, 20), (20, 60), []),
-            ("Solve the equation below for x:\n{}x + {} = {}x", lambda a, b, c: str(-b / (a - c)), (2, 6), (5, 20), (6, 8), [])
+            ("Solve the equation below for x:\n{}x + {} = {}x", lambda a, b, c: str(-b / (a - c)), (2, 6), (5, 20), (6, 8), []),
+            ("Simplify the expression {}x + {}x", lambda a, b: str(a + b) + "x", (2, 8), (2, 8), []),
+            ("By substituting x as {}, evaulate the expression 3x + 5?", lambda x: str(3 * x + 5), (2, 15), [])
         ]
     ]
 
@@ -407,5 +409,75 @@ async def say(ctx, *, text: str = ""):
             description=text,
             color=int("50B4E6", 16)
         ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
+
+@bot.command(aliases=["q"], help="Gives a random quiz question.")
+async def quiz(ctx):
+    if ctx.author.bot:
+        return
+
+    embed = discord.Embed(
+        color=int("50B4E6", 16),
+        description="Choose a difficulty level (0–1, more coming soon):\n" +
+                    "\n".join([
+                        "0 - Basic Arithmetic",
+                        "1 - Basic Algebra"
+                    ])
+    )
+    embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url)
+    await ctx.send(embed=embed)
+
+    try:
+        msg = await bot.wait_for(
+            "message",
+            check=lambda m: m.author == ctx.author and m.content.isdigit() and 0 <= int(m.content) <= 6,
+            timeout=10.0
+        )
+        level = int(msg.content)
+    except asyncio.TimeoutError:
+        await ctx.send(embed=discord.Embed(
+            color=int("FA3939", 16),
+            description="⏳ The command was canceled because you took too long to reply."
+        ).set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url))
+        return
+
+    q_obj = generate_question(level)
+    question_text, answer_info = list(q_obj.items())[0]
+    correct = answer_info["correct"][0]
+    choices = answer_info["incorrect"] + [correct]
+    random.shuffle(choices)
+
+    letter_choices = ["A", "B", "C", "D", "E"]
+    choice_map = {letter: choice for letter, choice in zip(letter_choices, choices)}
+    correct_choice = next(k for k, v in choice_map.items() if v == correct)
+
+    embed = discord.Embed(
+        color=int("50B4E6", 16),
+        description=f"🧠 **Level {level} Quiz**\n\n**{question_text}**\n\n" +
+                    "\n".join([f"{k} - {v}" for k, v in choice_map.items()])
+    )
+    embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url)
+    await ctx.send(embed=embed)
+
+    try:
+        msg = await bot.wait_for(
+            "message",
+            check=lambda m: m.author == ctx.author and m.content.upper() in choice_map.keys(),
+            timeout=30.0
+        )
+        if msg.content.upper() == correct_choice:
+            await ctx.send(embed=discord.Embed(
+                color=int("50B4E6", 16),
+                description=f"✅ Correct, {ctx.author.mention}! The answer was **{correct_choice}: {correct}**."
+            ).set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url))
+        else:
+            await ctx.send(embed=discord.Embed(
+                color=int("FA3939", 16),
+                description=f"❌ Incorrect, {ctx.author.mention}. The correct answer was **{correct_choice}: {correct}**."
+            ).set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url))
+    except asyncio.TimeoutError:
+        await ctx.send(embed=discord.Embed(
+            color=int("FA3939", 16),
+            description=f"⏳ Time's up, {ctx.author.mention}! The correct answer was **{correct_choice}: {correct}**."
+        ).set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url))
 
 bot.run("MTM3NzEwODg4MjI0NTAyNTgzMg.G34Vpg.RJq4V5EoK6U--Oo6YBhMGvCgc9kc6cdQqk88fk")
