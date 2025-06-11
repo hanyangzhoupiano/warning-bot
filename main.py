@@ -32,7 +32,7 @@ def generate_question(level):
             ("What is {} × {}?", lambda x, y: str(x * y), (2, 20), (2, 20), []),
             ("What is {} / {}?", lambda x, y: str(round(x / y, 2)), (20, 80), (5, 15), []),
             ("What is {}^{}?", lambda x, y: str(x ** y), (2, 15), (2, 4), []),
-            ("What is √{}?", lambda x: str(x), (2, 18), ["square"])
+            ("What is √{}?", lambda x: str(int(math.sqrt(x))), (2, 18), ["square"])
         ],
         [
             ("Solve the equation below for x:\n{}x + {} = {}", lambda x, y, z: str((z - y) / x), (2, 8), (5, 20), (30, 80), []),
