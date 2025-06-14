@@ -170,7 +170,7 @@ async def warn(ctx, name: str = None, *, reason: str = "No reason provided."):
                         user = member
                         break
     if user is not None:
-        if not user.bot
+        if not user.bot:
             a = False
             
             if ctx.author.id == int("1089171899" + "294167122"):
