@@ -356,13 +356,4 @@ async def say(ctx, *, text: str = ""):
             color=int("50B4E6", 16)
         ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
 
-'''FISHING SYSTEM'''
-
-@bot.command(help="Catch a fish!", aliases=[])
-async def fish(ctx):
-    await ctx.send(embed=discord.Embed(
-        description="fish",
-        color=int("50B4E6", 16)
-    ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url))
-
 bot.run(TOKEN)
